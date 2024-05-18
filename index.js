@@ -25,6 +25,16 @@ app.get('/roommates', async (req, res) => {
     }
 })
 
+app.post('/roommates', async (req, res) => {
+    try {
+        await RoommatesModel.createRandomRoommate();
+        return res.status(201).json({ message: 'Roommate creado exitosamente' });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error al crear el roommate' });
+    }
+});
+
 app.get('/gastos', async (req, res) => {
     try {
         const gastos = await GastosModel.findAll();
