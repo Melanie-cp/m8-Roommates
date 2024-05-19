@@ -130,10 +130,10 @@
         $("#roommatesSelectModal").html("");
         roommates.forEach((r) => {
           $("#roommatesSelect").append(`
-          <option value="${r.nombre}">${r.nombre}</option>
+          <option value="${r.id}">${r.nombre}</option>
           `);
           $("#roommatesSelectModal").append(`
-          <option value="${r.nombre}">${r.nombre}</option>
+          <option value="${r.id}">${r.nombre}</option>
           `);
           $("#roommates").append(`
                   <tr>
@@ -171,22 +171,37 @@
     };
 
     const agregarGasto = async () => {
-      const roommateSelected = $("#roommatesSelect").val();
+      const roommateNombre = $("#roommatesSelect").val();
       const descripcion = $("#descripcion").val();
       const monto = Number($("#monto").val());
-      await fetch("http://localhost:3000/gasto", {
+      const roommate = roommates.find(r => r.nombre === roommateNombre);
+      const roommateId = roommate.id;
+
+      await fetch("http://localhost:3000/gastos", {
         method: "POST",
         body: JSON.stringify({
-          roommate: roommateSelected,
+          roommateId,
+          roommateNombre,
           descripcion,
-          monto,
+          monto
         }),
-      });
-      imprimir();
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          imprimir();
+          console.log(data);
+        })
+        .catch(error => console.error("Error al agregar el gasto:", error));
     };
 
+
+
+
     const deleteGasto = async (id) => {
-      await fetch("http://localhost:3000/gasto?id=" + id, {
+      await fetch("http://localhost:3000/gastos?id=" + id, {
         method: "DELETE",
       });
       imprimir();
@@ -196,7 +211,7 @@
       const roommateSelected = $("#roommatesSelectModal").val();
       const descripcion = $("#descripcionModal").val();
       const monto = Number($("#montoModal").val());
-      await fetch("http://localhost:3000/gasto?id=" + gastoEditing, {
+      await fetch("http://localhost:3000/gastos?id=" + gastoEditing, {
         method: "PUT",
         body: JSON.stringify({
           roommate: roommateSelected,

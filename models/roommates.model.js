@@ -18,6 +18,7 @@ const createRandomRoommate = async () => {
         text: `
         INSERT INTO roommates (id, nombre, debe, recibe) 
         VALUES ($1, $2, $3, $4)
+        RETURNING *
         `,
         values: [
             uuidv4(),
